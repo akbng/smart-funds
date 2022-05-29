@@ -1,0 +1,33 @@
+{
+  "name": "smart-funds",
+  "version": "0.1.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test --network development",
+    "size": "truffle run contract-size",
+    "build": "truffle compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankanbag101/smart-funds.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ankanbag101/smart-funds/issues"
+  },
+  "homepage": "https://github.com/ankanbag101/smart-funds#readme",
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "prettier-plugin-solidity": "^1.0.0-beta.19",
+    "truffle-contract-size": "^2.0.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0"
+  }
+}
