@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-library Array {
+library ArrayUtils {
     function includes(uint256[] storage _array, uint256 value)
         internal
         view
