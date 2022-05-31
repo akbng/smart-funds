@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+
 contract Projects {
+  using SafeCast for uint256;
+
   struct Milestone {
     bytes32 name;
     bytes description;
@@ -37,6 +41,30 @@ contract Projects {
     _;
   }
 
+  function updateDescription(bytes32 _projectName, bytes memory _newLink)
+    public
+    onlyProjectOwner(_projectName)
+  {
+    Project storage project = fetchProject(_projectName);
+    project.description = _newLink;
+  }
+
+  function updateVideo(bytes32 _projectName, bytes memory _newLink)
+    public
+    onlyProjectOwner(_projectName)
+  {
+    Project storage project = fetchProject(_projectName);
+    project.main_video = _newLink;
+  }
+
+  function extendDeadline(bytes32 _projectName, uint256 _newTime)
+    public
+    onlyProjectOwner(_projectName)
+  {
+    Project storage project = fetchProject(_projectName);
+    project.deadline = _newTime.toUint64();
+  }
+
   function isProjectOwner(bytes32 _projectName, address _user)
     public
     view
@@ -59,6 +87,15 @@ contract Projects {
     internal
     view
     returns (Project memory)
+  {
+    bytes32 hash = getHash(_projectName);
+    return projects[projectIndex[hash]];
+  }
+
+  function fetchProject(bytes32 _projectName)
+    internal
+    view
+    returns (Project storage)
   {
     bytes32 hash = getHash(_projectName);
     return projects[projectIndex[hash]];
