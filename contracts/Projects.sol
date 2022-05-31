@@ -78,6 +78,21 @@ contract Projects {
     project.deadline = _newTime.toUint64();
   }
 
+  function fundProject(bytes32 _projectName, bool _optedForReturns)
+    public
+    payable
+  {
+    require(msg.value > 0, "Can not fund 0 ethers");
+    require(isValidProject(_projectName), "Project name provided is not valid");
+    Project storage project = fetchProject(_projectName);
+    uint32 funds = uint256(msg.value).toUint32();
+    users[msg.sender].funds.push(
+      Funds(_projectName, funds, funds, _optedForReturns, false)
+    );
+    project.raised_funds = funds;
+    project.backers.push(msg.sender);
+  }
+
   function getProjectAvailableFunds(bytes32 _projectName)
     public
     view
