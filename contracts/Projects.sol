@@ -29,9 +29,22 @@ contract Projects {
     Milestone[] milestones;
   }
 
+  struct Funds {
+    bytes32 project_name;
+    uint32 invested_funds;
+    uint32 available_funds;
+    bool opt_returns;
+    bool returns_received;
+  }
+
+  struct User {
+    Funds[] funds;
+  }
+
   Project[] projects;
 
   mapping(bytes32 => uint256) private projectIndex;
+  mapping(address => User) internal users;
 
   modifier onlyProjectOwner(bytes32 _projectName) {
     require(
