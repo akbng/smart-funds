@@ -2,9 +2,14 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "./libs/ArrayUtils.sol";
 
 contract Projects {
   using SafeCast for uint256;
+  using SafeCast for int256;
+  using Address for address payable;
+  using ArrayUtils for address[];
 
   struct Milestone {
     bytes32 name;
@@ -43,7 +48,7 @@ contract Projects {
 
   Project[] projects;
 
-  mapping(bytes32 => uint256) private projectIndex;
+  mapping(bytes32 => uint256) public projectIndex;
   mapping(address => User) internal users;
 
   modifier onlyProjectOwner(bytes32 _projectName) {
@@ -91,6 +96,33 @@ contract Projects {
     );
     project.raised_funds = funds;
     project.backers.push(msg.sender);
+  }
+
+  function getAllInvestments() public view returns (Funds[] memory) {
+    return users[msg.sender].funds;
+  }
+
+  function revokeFundsFromProject(uint256 _fundIndex) public {
+    Funds storage fund = users[msg.sender].funds[_fundIndex];
+    require(fund.available_funds > 0, "User don't have enough funds to refund");
+    require(
+      address(this).balance > fund.available_funds,
+      "Funds not available in the contract"
+    );
+    require(
+      getProjectAvailableFunds(fund.project_name) > fund.available_funds,
+      "Project has no available funds"
+    );
+    Project storage project = fetchProject(fund.project_name);
+    int256 backerIndex = project.backers.findIndex(msg.sender);
+    require(
+      backerIndex != -1,
+      "User is not present in the project's backers list"
+    );
+    payable(msg.sender).sendValue(fund.available_funds);
+    project.raised_funds -= fund.available_funds;
+    project.backers.remove(backerIndex.toUint256());
+    fund.available_funds = 0;
   }
 
   function getProjectAvailableFunds(bytes32 _projectName)
