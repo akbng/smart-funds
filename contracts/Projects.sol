@@ -20,6 +20,7 @@ contract Projects {
     uint32 disbursted_funds;
     address payable fund_address;
     uint64 deadline;
+    address owner;
     address[] backers;
     Milestone[] milestones;
   }
@@ -27,6 +28,22 @@ contract Projects {
   Project[] projects;
 
   mapping(bytes32 => uint256) private projectIndex;
+
+  modifier onlyProjectOwner(bytes32 _projectName) {
+    require(
+      isProjectOwner(_projectName, msg.sender),
+      "Only the Project members are allowed"
+    );
+    _;
+  }
+
+  function isProjectOwner(bytes32 _projectName, address _user)
+    public
+    view
+    returns (bool)
+  {
+    return getProject(_projectName).owner == _user;
+  }
 
   /// @dev checks if the Project Name provided is a valid Project or not
   /// @param _projectName which is the bytes32 representation of the name of the Project
