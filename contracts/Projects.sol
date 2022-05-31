@@ -65,6 +65,15 @@ contract Projects {
     project.deadline = _newTime.toUint64();
   }
 
+  function getProjectAvailableFunds(bytes32 _projectName)
+    public
+    view
+    returns (uint32)
+  {
+    Project memory project = getProject(_projectName);
+    return project.raised_funds - project.disbursted_funds;
+  }
+
   function isProjectOwner(bytes32 _projectName, address _user)
     public
     view
